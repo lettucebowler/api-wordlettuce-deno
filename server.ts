@@ -1,8 +1,14 @@
-import { serve } from 'https://deno.land/std@0.167.0/http/server.ts';
-import { Hono } from 'npm:hono@3.1.0';
-
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { Hono } from "https://deno.land/x/hono@v3.1.6/mod.ts";
 const app = new Hono();
 
-app.get('/', (c) => c.text('Hello Hono!'));
+async function whatever(c) {
+    const db = await Deno.openKv();
+    await db.set(["foo"], "bar");
+    const bar = await db.get(["foo"]);
+    return c.text(bar.value);
+}
+
+app.get('/', (c) => whatever(c));
 
 serve(app.fetch);
