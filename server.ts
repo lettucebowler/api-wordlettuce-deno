@@ -4,8 +4,6 @@ const app = new Hono();
 
 async function whatever(c) {
     const db = await Deno.openKv();
-    await db.set(["foo"], "bar");
-    await db.set(["bleh"], "bluh");
     const bar = await db.get(["foo"]);
     return c.text(bar.value);
 }
