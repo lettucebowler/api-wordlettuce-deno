@@ -1,7 +1,7 @@
-import { Hono } from 'npm:hono';
+import { Hono } from 'npm:hono@3';
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { zValidator } from './middleware/validator.js';
-import { bearerAuth } from 'npm:hono/bearer-auth';
+import { bearerAuth } from 'npm:hono@3/bearer-auth';
 import "https://deno.land/x/dotenv/load.ts";
 
 const app = new Hono<{ Bindings: Bindings }>();
