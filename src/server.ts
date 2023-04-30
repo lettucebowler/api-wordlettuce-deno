@@ -22,8 +22,8 @@ app.put(
 	zValidator('json', putUserBodySchema),
 	putUser);
 
-// import { userFilterSchema, getUsers } from './controller/users.ts';
-// app.get('/v1/users', zValidator('query', userFilterSchema), getUsers);
+import { getUsers } from './controller/users.ts';
+app.get('/v1/users', getUsers);
 
 import { getUserRequestSchema, getUser } from './controller/users.ts';
 app.get('/v1/users/:id', zValidator('param', getUserRequestSchema), getUser);

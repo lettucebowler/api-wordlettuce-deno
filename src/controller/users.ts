@@ -24,20 +24,16 @@ export const putUser: MiddlewareHandler = async (c) => {
 	return c.text('created', 201);
 };
 
-export const userFilterSchema = z.object({
-	count: z.coerce.number().positive().optional(),
-	offset: z.coerce.number().positive().optional()
-});
-
 export const getUsers: MiddlewareHandler = async (c) => {
-	const { count = 10, offset = 0 } = c.req.valid('query');
-	const query = c.env.WORDLETTUCE_DB.prepare(
-		'select * from users order by id limit ?1 offset ?2'
-	).bind(count, offset);
-	const queryData = await query.all();
-	const { success, results, meta } = queryData;
-	const { duration, changes } = meta;
-	return c.json({ success, results, meta: { duration, changes } });
+	const iter = await kv.list({ prefix: ['users'], })
+	const users: any = [];
+	for await (const res of iter) {
+		users.push({
+			...res.value,
+			id: res.key.at(1),
+		});
+	}
+	return c.json(users);
 };
 
 export const getUserRequestSchema = z.object({
@@ -55,13 +51,6 @@ export const getUser: MiddlewareHandler = async (c) => {
 		id
 	};
 	return c.json(user);
-	// const query = c.env.WORDLETTUCE_DB.prepare('select * from users where id = ?1').bind(id);
-	// const { success, results, meta } = await query.all();
-	// return c.json({
-	// 	success,
-	// 	results,
-	// 	meta
-	// });
 };
 
 // export const getUserGameResults: MiddlewareHandler = async (c) => {
