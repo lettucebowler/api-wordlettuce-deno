@@ -1,7 +1,7 @@
-import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'npm:hono';
-import { validator } from 'npm:hono/validator';
-import type { z } from 'npm:zod';
-import type { ZodSchema, ZodError } from 'npm:zod';
+import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'https://deno.land/x/hono@v3.1.7/mod.ts';
+import { validator } from "https://deno.land/x/hono@v3.1.7/validator/validator.ts";
+import { z } from "https://deno.land/x/zod/mod.ts";
+import type { ZodSchema, ZodError } from "https://deno.land/x/zod/mod.ts";;
 
 type Hook<T, E extends Env, P extends string> = (
 	result: { success: true; data: T } | { success: false; error: ZodError },

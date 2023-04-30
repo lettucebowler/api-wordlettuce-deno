@@ -1,5 +1,5 @@
-import { MiddlewareHandler } from 'npm:hono';
-import { z } from 'npm:zod';
+import { MiddlewareHandler } from "https://deno.land/x/hono@v3.1.7/mod.ts";
+import { z } from "https://deno.land/x/zod/mod.ts";
 
 const githubIdSchema = z.coerce.number({ invalid_type_error: 'id must be numeric.' }).int().positive()
 
