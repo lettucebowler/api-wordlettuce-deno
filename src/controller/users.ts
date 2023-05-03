@@ -83,9 +83,6 @@ export const getUserGameResults: MiddlewareHandler = async (c) => {
       ...res.value,
       gamenum: res.key.at(-1),
     });
-    if (gameResults.length >= 5) {
-      break;
-    }
   }
   return c.json({
     results: gameResults,
@@ -117,10 +114,11 @@ export const saveGameResults: MiddlewareHandler = async (c) => {
     answers: string;
   };
   const { user } = c.req.param();
-  const user_id = Number(user);
+  const idRes = await kv.get(["ids_by_username", user]);
+  const { id } = idRes.value;
   const gamenum = Number(c.req.param("gamenum"));
-  const primaryKey = ["users", user_id, "game_results", gamenum];
-  const secondaryKey = ["game_results_by_gamenum", gamenum, user_id];
+  const primaryKey = ["users", id, "game_results", gamenum];
+  const secondaryKey = ["game_results_by_gamenum", gamenum, id];
   const gameResult = {
     answers,
     attempts,
