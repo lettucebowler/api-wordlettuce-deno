@@ -1,44 +1,69 @@
 import { Hono } from "https://deno.land/x/hono@v3.1.7/mod.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { zValidator } from './middleware/validator.ts';
+import { zValidator } from "./middleware/validator.ts";
 import { bearerAuth } from "https://deno.land/x/hono@v3.1.7/middleware/bearer-auth/index.ts";
-import "https://deno.land/x/dotenv/load.ts";
+import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono();
 
-app.use('/*', async (c, next) => {
-	const token = Deno.env.get('TOKEN');
-	const auth = bearerAuth({ token });
-	return auth(c, next);
+app.use("/*", (c, next) => {
+  const token = Deno.env.get("TOKEN") || "";
+  const auth = bearerAuth({ token });
+  return auth(c, next);
 });
 
-// import { getRankingsRequestSchema, getRankings } from './controller/rankings.ts';
-// app.get('/v1/rankings', zValidator('query', getRankingsRequestSchema), getRankings);
-
-import { putUser, putUserParamSchema, putUserBodySchema } from './controller/users.ts';
+import {
+  putUser,
+  putUserBodySchema,
+  putUserParamSchema,
+} from "./controller/users.ts";
 app.put(
-	'/v1/users/:id',
-	zValidator('param', putUserParamSchema),
-	zValidator('json', putUserBodySchema),
-	putUser);
+  "/v1/users/:id",
+  zValidator("param", putUserParamSchema),
+  zValidator("json", putUserBodySchema),
+  putUser,
+);
 
-import { getUsers } from './controller/users.ts';
-app.get('/v1/users', getUsers);
+import { postUser } from "./controller/users.ts";
+app.post(
+  "/v1/users",
+  postUser,
+);
 
-import { getUserRequestSchema, getUser } from './controller/users.ts';
-app.get('/v1/users/:id', zValidator('param', getUserRequestSchema), getUser);
+// import { getUsers } from './controller/users.ts';
+// app.get('/v1/users', getUsers);
 
-// import { getUserGameResults } from './controller/users.ts';
-// app.get('/v1/users/:user/gameresults', getUserGameResults);
+import { getUser, getUserRequestSchema } from "./controller/users.ts";
+app.get(
+  "/v1/users/:id",
+  zValidator(
+    "param",
+    getUserRequestSchema,
+  ),
+  getUser,
+);
 
-// import { getGameResult } from './controller/users.ts';
-// app.get('/v1/users/:user/gameresults/:gamenum', getGameResult);
+import {
+  getUserGameResults,
+  getUserGameResultsRequestSchema,
+} from "./controller/users.ts";
+app.get(
+  "/v1/users/:user/gameresults",
+  zValidator("param", getUserGameResultsRequestSchema),
+  getUserGameResults,
+);
 
-// import { saveGameResultRequestSchema, saveGameResults } from './controller/users.ts';
-// app.put(
-// 	'/v1/users/:user/gameresults/:gamenum',
-// 	zValidator('json', saveGameResultRequestSchema),
-// 	saveGameResults
-// );
+import { getGameResult } from "./controller/users.ts";
+app.get("/v1/users/:user/gameresults/:gamenum", getGameResult);
+
+import {
+  saveGameResultRequestSchema,
+  saveGameResults,
+} from "./controller/users.ts";
+app.put(
+  "/v1/users/:user/gameresults/:gamenum",
+  zValidator("json", saveGameResultRequestSchema),
+  saveGameResults,
+);
 
 serve(app.fetch);
