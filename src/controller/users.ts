@@ -115,6 +115,7 @@ export const saveGameResults: MiddlewareHandler = async (c) => {
   };
   const { user } = c.req.param();
   const idRes = await kv.get(["ids_by_username", user]);
+  console.log(idRes);
   const { id } = idRes.value;
   const gamenum = Number(c.req.param("gamenum"));
   const primaryKey = ["users", id, "game_results", gamenum];
